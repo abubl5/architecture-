@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Архитектура сервиса Бизнес-инсайты для кейса Альфа-Банка." />
+    <title>Бизнес-инсайты — архитектура</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <header class="header">
+      <a class="brand" href="#top">Бизнес-инсайты</a>
+      <nav>
+        <a href="#product">Продукт</a>
+        <a href="#flow">Как работает</a>
+        <a href="#architecture">Архитектура</a>
+        <a href="#data">Данные</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <p class="eyebrow">Альфа-Банк · Новостная аналитика для принятия бизнес-решений</p>
+        <h1>Не новости.<br /><span>Обоснованные решения для бизнеса.</span></h1>
+        <p class="lead">Сервис определяет контекст компании, находит значимые события и объясняет их возможное влияние с опорой на внешние источники и аналитику Альфа-Банка.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#flow">Посмотреть логику</a>
+          <a class="button button-secondary" href="#architecture">Открыть архитектуру</a>
+        </div>
+      </section>
+
+      <section id="product" class="section split-section">
+        <div>
+          <p class="eyebrow">Результат работы сервиса</p>
+          <h2>Бизнес-инсайт по конкретной компании</h2>
+          <p>Карточка события — не пересказ публикации. Это проверенный вывод, который помогает руководителю понять ситуацию и подготовить следующий шаг.</p>
+        </div>
+        <ol class="question-list">
+          <li><span>01</span><strong>Что произошло?</strong><small>Подтверждённые факты, сроки и источник.</small></li>
+          <li><span>02</span><strong>Почему это важно?</strong><small>Связь события с контекстом компании.</small></li>
+          <li><span>03</span><strong>Что может измениться?</strong><small>Риски, возможности и условия сценария.</small></li>
+          <li><span>04</span><strong>Что думает банк?</strong><small>Релевантная аналитика Альфа-Банка, если она найдена.</small></li>
+          <li><span>05</span><strong>На чём основан вывод?</strong><small>Источники, цитаты и признаки компании.</small></li>
+        </ol>
+      </section>
+
+      <section id="flow" class="section dark-section">
+        <p class="eyebrow">Главный сценарий</p>
+        <h2>Как рождается бизнес-инсайт</h2>
+        <div class="flow">
+          <article><b>1</b><h3>Контекст компании</h3><p>ОКВЭД, продукты банка, регион регистрации, группа и разрешённые агрегаты связей.</p></article>
+          <i>→</i>
+          <article><b>2</b><h3>Понимание события</h3><p>Сервис получает публикации, выделяет факты и сохраняет точные цитаты.</p></article>
+          <i>→</i>
+          <article><b>3</b><h3>Отбор значимого</h3><p>Событие сопоставляется с компанией и ролью руководителя.</p></article>
+          <i>→</i>
+          <article><b>4</b><h3>Аналитика банка</h3><p>Ищутся материалы Альфа-Банка, относящиеся к теме и выводу.</p></article>
+          <i>→</i>
+          <article><b>5</b><h3>Проверенный вывод</h3><p>Инсайт проходит проверку оснований и становится доступен пользователю.</p></article>
+        </div>
+      </section>
+
+      <section id="architecture" class="section">
+        <p class="eyebrow">Логическая архитектура</p>
+        <h2>Данные отделены от вывода, а вывод — от его показа</h2>
+        <div class="diagram-wrap">
+          <pre class="mermaid">
+flowchart LR
+    U[Руководитель компании] --> UI[Раздел «Бизнес-инсайты»]
+    UI --> API[Сервер приложения]
+    API --> DB[(PostgreSQL)]
+    API --> Q[Очередь заданий]
+    Q --> W[Фоновая подготовка инсайтов]
+    W --> DB
+    CD[Данные компаний<br/>из кейса] --> W
+    NS[Внешние новостные<br/>источники] --> W
+    BR[Аналитика<br/>Альфа-Банка] --> W
+    W <--> LLM[Разрешённые LLM]
+          </pre>
+        </div>
+        <div class="architecture-grid">
+          <article><h3>Раздел в Альфа-Бизнесе</h3><p>Точка входа, обзор готовых инсайтов, карточка, источники и уточняющие вопросы.</p></article>
+          <article><h3>Сервер приложения</h3><p>Проверяет доступ, отдаёт только опубликованные результаты и работает с вопросами пользователя.</p></article>
+          <article><h3>Фоновая подготовка</h3><p>Обновляет контекст, понимает события, ищет аналитику банка, готовит и проверяет инсайты.</p></article>
+          <article><h3>Хранилище доказательств</h3><p>Версии источников, профили, цитаты и опубликованные результаты сохраняются для повторной проверки.</p></article>
+        </div>
+      </section>
+
+      <section class="section accent-section">
+        <div>
+          <p class="eyebrow">Роль искусственного интеллекта</p>
+          <h2>LLM помогает анализировать.<br />Решение о публикации принимает система.</h2>
+        </div>
+        <ul class="check-list">
+          <li>Извлекает факты из текста и привязывает их к цитатам.</li>
+          <li>Готовит структурированный вывод по доказательствам.</li>
+          <li>Проверяет полноту и непротиворечивость черновика.</li>
+          <li>Не получает произвольный доступ к данным, инструментам или публикации результата.</li>
+        </ul>
+      </section>
+
+      <section id="data" class="section">
+        <p class="eyebrow">Модель данных</p>
+        <h2>Каждый вывод можно восстановить</h2>
+        <div class="data-grid">
+          <article><span>01</span><h3>Контекст компании</h3><p>Версии профиля, исходные строки CSV и ограничения интерпретации признаков.</p></article>
+          <article><span>02</span><h3>События</h3><p>Редакции публикаций, факты, цитаты, версии событий и зафиксированные противоречия.</p></article>
+          <article><span>03</span><h3>Материалы банка</h3><p>Версии PDF, страницы и фрагменты для точной ссылки на аналитический тезис.</p></article>
+          <article><span>04</span><h3>Бизнес-инсайт</h3><p>Компания, роль, событие, утверждения, доказательства, статус проверки и срок актуальности.</p></article>
+        </div>
+      </section>
+
+      <section class="section limit-section">
+        <p class="eyebrow">Ограничения, которые учитывает решение</p>
+        <div class="limit-grid">
+          <p>Обезличенный идентификатор не связывается с реальной компанией по названию.</p>
+          <p>Наблюдаемый платёж не доказывает роль поставщика или покупателя.</p>
+          <p>Неизвестные данные не заменяются нулём или отрицанием.</p>
+          <p>Общий обзор банка не выдаётся за прямую оценку конкретного события.</p>
+          <p>Неподтверждённый вывод не публикуется как готовый инсайт.</p>
+          <p>Доступ проверяется перед показом инсайта, источника и ответа на вопрос.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Черновая архитектура решения для хакатона Альфа-Банка.</p>
+      <a href="https://github.com/abubl5/architecture-" target="_blank" rel="noreferrer">Исходный репозиторий ↗</a>
+    </footer>
+
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'dark', securityLevel: 'strict', themeVariables: { primaryColor: '#ec3229', primaryTextColor: '#fff', primaryBorderColor: '#ec3229', lineColor: '#c6c8ce', secondaryColor: '#1f2937', tertiaryColor: '#101114' } });
+    </script>
+  </body>
+</html>
