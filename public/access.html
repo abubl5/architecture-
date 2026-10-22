@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Доступ к архитектуре</title>
+    <style>
+      :root { color-scheme: dark; font-family: Arial, sans-serif; }
+      * { box-sizing: border-box; }
+      body { align-items: center; background: #111; display: flex; justify-content: center; margin: 0; min-height: 100vh; padding: 24px; }
+      main { background: #1d1d1d; border: 1px solid #3b3b3b; border-radius: 16px; max-width: 430px; padding: 36px; width: 100%; }
+      h1 { font-size: 26px; margin: 0 0 12px; }
+      p { color: #bdbdbd; line-height: 1.5; margin: 0 0 24px; }
+      label { display: block; font-size: 14px; margin-bottom: 8px; }
+      input { background: #111; border: 1px solid #595959; border-radius: 8px; color: white; font-size: 16px; padding: 12px; width: 100%; }
+      button { background: #ef3124; border: 0; border-radius: 8px; color: white; cursor: pointer; font-size: 16px; font-weight: 700; margin-top: 16px; padding: 12px; width: 100%; }
+      button:disabled { cursor: wait; opacity: .7; }
+      #error { color: #ff8a82; font-size: 14px; min-height: 20px; margin: 12px 0 0; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Архитектура бизнес-инсайтов</h1>
+      <p>Введите пароль, чтобы открыть интерактивные диаграммы.</p>
+      <form id="login-form">
+        <label for="password">Пароль</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required autofocus />
+        <button type="submit">Открыть архитектуру</button>
+        <div id="error" role="alert" aria-live="polite"></div>
+      </form>
+    </main>
+    <script>
+      const form = document.getElementById("login-form");
+      const password = document.getElementById("password");
+      const button = form.querySelector("button");
+      const error = document.getElementById("error");
+      const requested = new URLSearchParams(location.search).get("next") || "/";
+      const destination = requested.startsWith("/") && !requested.startsWith("//") ? requested : "/";
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        error.textContent = "";
+        button.disabled = true;
+
+        try {
+          const response = await fetch("/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: password.value }),
+          });
+
+          if (!response.ok) throw new Error("Incorrect password");
+          location.assign(destination);
+        } catch {
+          error.textContent = "Пароль не подошёл. Проверьте его и попробуйте ещё раз.";
+          password.select();
+          button.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>
